@@ -9,48 +9,68 @@ router = APIRouter(
     tags=["Insurance Documents"]
 )
 
-@router.get("/total-of-docs-tracked")
-def total_docs_tracked(db: Session = Depends(get_db)):
-
-    vehicle_count = db.query(VehicleInsurance).count()
-
-    docs_per_vehicle = 10
-
-    return {
-        "total_documents_tracked": vehicle_count * docs_per_vehicle,
-        "vehicle_count": vehicle_count,
-        "docs_per_vehicle": docs_per_vehicle
-    }
-
 @router.get("/total-valid-docs")
 def total_valid_documents(db: Session = Depends(get_db)):
 
     today = date.today()
     total_ok = 0
+    result = []
 
     vehicles = db.query(VehicleInsurance).all()
 
     for v in vehicles:
 
-        all_dates = [
-            v.insurance_expiry_date,
-            v.permit_expiry_date,
-            v.permit_authorization_date,
-            v.fitness_expiry_date,
-            v.puc_expiry_date,
-            v.cng_leakage_test,
-            v.tax_receipt_validity_date,
-            v.road_tax_mv_tax,
-            v.dl_expiry_date,
-            v.rc_valid_till_date
-        ]
+        all_dates = {
+            "insurance_expiry_date": v.insurance_expiry_date,
+            "permit_expiry_date": v.permit_expiry_date,
+            "permit_authorization_date": v.permit_authorization_date,
+            "fitness_expiry_date": v.fitness_expiry_date,
+            "puc_expiry_date": v.puc_expiry_date,
+            "cng_leakage_test": v.cng_leakage_test,
+            "tax_receipt_validity_date": v.tax_receipt_validity_date,
+            "road_tax_mv_tax": v.road_tax_mv_tax,
+            "dl_expiry_date": v.dl_expiry_date,
+            "rc_valid_till_date": v.rc_valid_till_date
+        }
 
-        for d in all_dates:
+        valid_docs = []
+
+        for name, d in all_dates.items():
             if d and d >= today:
                 total_ok += 1
+                valid_docs.append(name)
+
+        result.append({
+            "id": v.id,
+            "sl_no": v.sl_no,
+            "name": v.name,
+            "reg_no": v.reg_no,
+            "policy_no": v.policy_no,
+
+            "insurance_expiry_date": v.insurance_expiry_date,
+            "permit_expiry_date": v.permit_expiry_date,
+            "permit_authorization_date": v.permit_authorization_date,
+            "fitness_expiry_date": v.fitness_expiry_date,
+            "puc_expiry_date": v.puc_expiry_date,
+            "cng_leakage_test": v.cng_leakage_test,
+            "tax_receipt_validity_date": v.tax_receipt_validity_date,
+            "road_tax_mv_tax": v.road_tax_mv_tax,
+
+            "driver_dl_no": v.driver_dl_no,
+            "driver_name": v.driver_name,
+            "dl_no": v.dl_no,
+            "dl_expiry_date": v.dl_expiry_date,
+
+            "claim": v.claim,
+            "rc_valid_till_date": v.rc_valid_till_date,
+
+            "valid_documents": valid_docs,
+            "valid_count": len(valid_docs)
+        })
 
     return {
-        "total_valid_documents": total_ok
+        "total_valid_documents": total_ok,
+        "vehicles": result
     }
 
 @router.get("/total-expired-docs")
@@ -58,30 +78,63 @@ def total_expired_documents(db: Session = Depends(get_db)):
 
     today = date.today()
     total_expired = 0
+    result = []
 
     vehicles = db.query(VehicleInsurance).all()
 
     for v in vehicles:
 
-        all_dates = [
-            v.insurance_expiry_date,
-            v.permit_expiry_date,
-            v.permit_authorization_date,
-            v.fitness_expiry_date,
-            v.puc_expiry_date,
-            v.cng_leakage_test,
-            v.tax_receipt_validity_date,
-            v.road_tax_mv_tax,
-            v.dl_expiry_date,
-            v.rc_valid_till_date
-        ]
+        all_dates = {
+            "insurance_expiry_date": v.insurance_expiry_date,
+            "permit_expiry_date": v.permit_expiry_date,
+            "permit_authorization_date": v.permit_authorization_date,
+            "fitness_expiry_date": v.fitness_expiry_date,
+            "puc_expiry_date": v.puc_expiry_date,
+            "cng_leakage_test": v.cng_leakage_test,
+            "tax_receipt_validity_date": v.tax_receipt_validity_date,
+            "road_tax_mv_tax": v.road_tax_mv_tax,
+            "dl_expiry_date": v.dl_expiry_date,
+            "rc_valid_till_date": v.rc_valid_till_date
+        }
 
-        for d in all_dates:
+        expired_docs = []
+
+        for name, d in all_dates.items():
             if d and d < today:
                 total_expired += 1
+                expired_docs.append(name)
+
+        result.append({
+            "id": v.id,
+            "sl_no": v.sl_no,
+            "name": v.name,
+            "reg_no": v.reg_no,
+            "policy_no": v.policy_no,
+
+            "insurance_expiry_date": v.insurance_expiry_date,
+            "permit_expiry_date": v.permit_expiry_date,
+            "permit_authorization_date": v.permit_authorization_date,
+            "fitness_expiry_date": v.fitness_expiry_date,
+            "puc_expiry_date": v.puc_expiry_date,
+            "cng_leakage_test": v.cng_leakage_test,
+            "tax_receipt_validity_date": v.tax_receipt_validity_date,
+            "road_tax_mv_tax": v.road_tax_mv_tax,
+
+            "driver_dl_no": v.driver_dl_no,
+            "driver_name": v.driver_name,
+            "dl_no": v.dl_no,
+            "dl_expiry_date": v.dl_expiry_date,
+
+            "claim": v.claim,
+            "rc_valid_till_date": v.rc_valid_till_date,
+
+            "expired_documents": expired_docs,
+            "expired_count": len(expired_docs)
+        })
 
     return {
-        "total_expired_documents": total_expired
+        "total_expired_documents": total_expired,
+        "vehicles": result
     }
 
 @router.get("/expiring-in-7-days")
@@ -91,30 +144,64 @@ def expiring_in_7_days(db: Session = Depends(get_db)):
     next_7 = today + timedelta(days=7)
 
     total_expiring = 0
+    result = []
 
     vehicles = db.query(VehicleInsurance).all()
 
     for v in vehicles:
 
-        all_dates = [
-            v.insurance_expiry_date,
-            v.permit_expiry_date,
-            v.permit_authorization_date,
-            v.fitness_expiry_date,
-            v.puc_expiry_date,
-            v.cng_leakage_test,
-            v.tax_receipt_validity_date,
-            v.road_tax_mv_tax,
-            v.dl_expiry_date,
-            v.rc_valid_till_date
-        ]
+        all_dates = {
+            "insurance_expiry_date": v.insurance_expiry_date,
+            "permit_expiry_date": v.permit_expiry_date,
+            "permit_authorization_date": v.permit_authorization_date,
+            "fitness_expiry_date": v.fitness_expiry_date,
+            "puc_expiry_date": v.puc_expiry_date,
+            "cng_leakage_test": v.cng_leakage_test,
+            "tax_receipt_validity_date": v.tax_receipt_validity_date,
+            "road_tax_mv_tax": v.road_tax_mv_tax,
+            "dl_expiry_date": v.dl_expiry_date,
+            "rc_valid_till_date": v.rc_valid_till_date
+        }
 
-        for d in all_dates:
+        expiring_docs = []
+
+        for name, d in all_dates.items():
             if d and today <= d <= next_7:
                 total_expiring += 1
+                expiring_docs.append(name)
+
+        if expiring_docs:
+            result.append({
+                "id": v.id,
+                "sl_no": v.sl_no,
+                "name": v.name,
+                "reg_no": v.reg_no,
+                "policy_no": v.policy_no,
+
+                "insurance_expiry_date": v.insurance_expiry_date,
+                "permit_expiry_date": v.permit_expiry_date,
+                "permit_authorization_date": v.permit_authorization_date,
+                "fitness_expiry_date": v.fitness_expiry_date,
+                "puc_expiry_date": v.puc_expiry_date,
+                "cng_leakage_test": v.cng_leakage_test,
+                "tax_receipt_validity_date": v.tax_receipt_validity_date,
+                "road_tax_mv_tax": v.road_tax_mv_tax,
+
+                "driver_dl_no": v.driver_dl_no,
+                "driver_name": v.driver_name,
+                "dl_no": v.dl_no,
+                "dl_expiry_date": v.dl_expiry_date,
+
+                "claim": v.claim,
+                "rc_valid_till_date": v.rc_valid_till_date,
+
+                "expiring_documents": expiring_docs,
+                "expiring_count": len(expiring_docs)
+            })
 
     return {
-        "expiring_in_7_days": total_expiring
+        "expiring_in_7_days": total_expiring,
+        "vehicles": result
     }
 
 @router.get("/expiring-in-30-days")
@@ -124,39 +211,102 @@ def expiring_in_30_days(db: Session = Depends(get_db)):
     next_30 = today + timedelta(days=30)
 
     total_expiring = 0
+    result = []
 
     vehicles = db.query(VehicleInsurance).all()
 
     for v in vehicles:
 
-        all_dates = [
-            v.insurance_expiry_date,
-            v.permit_expiry_date,
-            v.permit_authorization_date,
-            v.fitness_expiry_date,
-            v.puc_expiry_date,
-            v.cng_leakage_test,
-            v.tax_receipt_validity_date,
-            v.road_tax_mv_tax,
-            v.dl_expiry_date,
-            v.rc_valid_till_date
-        ]
+        all_dates = {
+            "insurance_expiry_date": v.insurance_expiry_date,
+            "permit_expiry_date": v.permit_expiry_date,
+            "permit_authorization_date": v.permit_authorization_date,
+            "fitness_expiry_date": v.fitness_expiry_date,
+            "puc_expiry_date": v.puc_expiry_date,
+            "cng_leakage_test": v.cng_leakage_test,
+            "tax_receipt_validity_date": v.tax_receipt_validity_date,
+            "road_tax_mv_tax": v.road_tax_mv_tax,
+            "dl_expiry_date": v.dl_expiry_date,
+            "rc_valid_till_date": v.rc_valid_till_date
+        }
 
-        for d in all_dates:
+        expiring_docs = []
+
+        for name, d in all_dates.items():
             if d and today <= d <= next_30:
                 total_expiring += 1
+                expiring_docs.append(name)
+
+        if expiring_docs:
+            result.append({
+                "id": v.id,
+                "sl_no": v.sl_no,
+                "name": v.name,
+                "reg_no": v.reg_no,
+                "policy_no": v.policy_no,
+
+                "insurance_expiry_date": v.insurance_expiry_date,
+                "permit_expiry_date": v.permit_expiry_date,
+                "permit_authorization_date": v.permit_authorization_date,
+                "fitness_expiry_date": v.fitness_expiry_date,
+                "puc_expiry_date": v.puc_expiry_date,
+                "cng_leakage_test": v.cng_leakage_test,
+                "tax_receipt_validity_date": v.tax_receipt_validity_date,
+                "road_tax_mv_tax": v.road_tax_mv_tax,
+
+                "driver_dl_no": v.driver_dl_no,
+                "driver_name": v.driver_name,
+                "dl_no": v.dl_no,
+                "dl_expiry_date": v.dl_expiry_date,
+
+                "claim": v.claim,
+                "rc_valid_till_date": v.rc_valid_till_date,
+
+                "expiring_documents": expiring_docs,
+                "expiring_count": len(expiring_docs)
+            })
 
     return {
-        "expiring_in_30_days": total_expiring
+        "expiring_in_30_days": total_expiring,
+        "vehicles": result
     }
 
 @router.get("/active-claims")
 def active_claims(db: Session = Depends(get_db)):
 
-    count = db.query(VehicleInsurance).filter(
+    vehicles = db.query(VehicleInsurance).filter(
         VehicleInsurance.claim == "YES"
-    ).count()
+    ).all()
+
+    result = []
+
+    for v in vehicles:
+        result.append({
+            "id": v.id,
+            "sl_no": v.sl_no,
+            "name": v.name,
+            "reg_no": v.reg_no,
+            "policy_no": v.policy_no,
+
+            "insurance_expiry_date": v.insurance_expiry_date,
+            "permit_expiry_date": v.permit_expiry_date,
+            "permit_authorization_date": v.permit_authorization_date,
+            "fitness_expiry_date": v.fitness_expiry_date,
+            "puc_expiry_date": v.puc_expiry_date,
+            "cng_leakage_test": v.cng_leakage_test,
+            "tax_receipt_validity_date": v.tax_receipt_validity_date,
+            "road_tax_mv_tax": v.road_tax_mv_tax,
+
+            "driver_dl_no": v.driver_dl_no,
+            "driver_name": v.driver_name,
+            "dl_no": v.dl_no,
+            "dl_expiry_date": v.dl_expiry_date,
+
+            "claim": v.claim,
+            "rc_valid_till_date": v.rc_valid_till_date
+        })
 
     return {
-        "active_claims": count
+        "active_claims_count": len(result),
+        "vehicles": result
     }
