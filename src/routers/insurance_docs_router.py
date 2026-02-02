@@ -9,6 +9,160 @@ router = APIRouter(
     tags=["Insurance Documents"]
 )
 
+@router.get("/count_total_docs")
+def count_total_documents(db: Session = Depends(get_db)):
+
+    vehicles = db.query(VehicleInsurance).all()
+
+    total_docs = 0
+
+    for v in vehicles:
+
+        all_dates = [
+            v.insurance_expiry_date,
+            v.permit_expiry_date,
+            v.permit_authorization_date,
+            v.fitness_expiry_date,
+            v.puc_expiry_date,
+            v.cng_leakage_test,
+            v.tax_receipt_validity_date,
+            v.road_tax_mv_tax,
+            v.dl_expiry_date,
+            v.rc_valid_till_date
+        ]
+
+        # 👉 count every document even if null
+        total_docs += len(all_dates)
+
+    return {
+        "total_documents_tracked": total_docs
+    }
+
+@router.get("/count-valid")
+def count_valid_documents(db: Session = Depends(get_db)):
+
+    today = date.today()
+    total_ok = 0
+
+    vehicles = db.query(VehicleInsurance).all()
+
+    for v in vehicles:
+        all_dates = [
+            v.insurance_expiry_date,
+            v.permit_expiry_date,
+            v.permit_authorization_date,
+            v.fitness_expiry_date,
+            v.puc_expiry_date,
+            v.cng_leakage_test,
+            v.tax_receipt_validity_date,
+            v.road_tax_mv_tax,
+            v.dl_expiry_date,
+            v.rc_valid_till_date
+        ]
+
+        for d in all_dates:
+            if d and d >= today:
+                total_ok += 1
+
+    return {"total_valid_documents": total_ok}
+
+@router.get("/count-expired")
+def count_expired_documents(db: Session = Depends(get_db)):
+
+    today = date.today()
+    total_expired = 0
+
+    vehicles = db.query(VehicleInsurance).all()
+
+    for v in vehicles:
+        all_dates = [
+            v.insurance_expiry_date,
+            v.permit_expiry_date,
+            v.permit_authorization_date,
+            v.fitness_expiry_date,
+            v.puc_expiry_date,
+            v.cng_leakage_test,
+            v.tax_receipt_validity_date,
+            v.road_tax_mv_tax,
+            v.dl_expiry_date,
+            v.rc_valid_till_date
+        ]
+
+        for d in all_dates:
+            if d and d < today:
+                total_expired += 1
+
+    return {"total_expired_documents": total_expired}
+
+@router.get("/count-7-days")
+def count_expiring_7_days(db: Session = Depends(get_db)):
+
+    today = date.today()
+    next_7 = today + timedelta(days=7)
+
+    total = 0
+
+    vehicles = db.query(VehicleInsurance).all()
+
+    for v in vehicles:
+        all_dates = [
+            v.insurance_expiry_date,
+            v.permit_expiry_date,
+            v.permit_authorization_date,
+            v.fitness_expiry_date,
+            v.puc_expiry_date,
+            v.cng_leakage_test,
+            v.tax_receipt_validity_date,
+            v.road_tax_mv_tax,
+            v.dl_expiry_date,
+            v.rc_valid_till_date
+        ]
+
+        for d in all_dates:
+            if d and today <= d <= next_7:
+                total += 1
+
+    return {"expiring_in_7_days": total}
+
+@router.get("/count-30-days")
+def count_expiring_30_days(db: Session = Depends(get_db)):
+
+    today = date.today()
+    next_30 = today + timedelta(days=30)
+
+    total = 0
+
+    vehicles = db.query(VehicleInsurance).all()
+
+    for v in vehicles:
+        all_dates = [
+            v.insurance_expiry_date,
+            v.permit_expiry_date,
+            v.permit_authorization_date,
+            v.fitness_expiry_date,
+            v.puc_expiry_date,
+            v.cng_leakage_test,
+            v.tax_receipt_validity_date,
+            v.road_tax_mv_tax,
+            v.dl_expiry_date,
+            v.rc_valid_till_date
+        ]
+
+        for d in all_dates:
+            if d and today <= d <= next_30:
+                total += 1
+
+    return {"expiring_in_30_days": total}
+
+@router.get("/count-claims")
+def count_active_claims(db: Session = Depends(get_db)):
+
+    count = db.query(VehicleInsurance).filter(
+        VehicleInsurance.claim == "YES"
+    ).count()
+
+    return {"active_claims_count": count}
+
 @router.get("/total-valid-docs")
 def total_valid_documents(db: Session = Depends(get_db)):
 

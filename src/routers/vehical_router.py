@@ -18,7 +18,6 @@ def create_vehicle(data: VehicleInsuranceCreate, db: Session = Depends(get_db)):
     db.refresh(vehicle)
     return vehicle
 
-
 # READ ALL
 @router.get("/", response_model=list[VehicleInsuranceResponse])
 def get_all_vehicles(db: Session = Depends(get_db)):

@@ -10,8 +10,6 @@ router = APIRouter(
     tags=["Vehicle Insurance"]
 )
 
-from datetime import date
-
 def get_expired_records(db, column):
     today = date.today()
 
