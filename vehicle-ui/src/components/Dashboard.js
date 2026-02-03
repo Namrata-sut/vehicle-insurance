@@ -22,6 +22,7 @@ const Dashboard = () => {
     seven: 0,
     thirty: 0,
     claims: 0,
+    fifteen: 0,
     total: 0
   });
 
@@ -34,29 +35,33 @@ const Dashboard = () => {
   const loadCounts = async () => {
     try {
       const [
-        valid,
-        expired,
-        seven,
-        thirty,
-        claims,
-        total
-      ] = await Promise.all([
-        API.get("/insurance-docs/count-valid"),
-        API.get("/insurance-docs/count-expired"),
-        API.get("/insurance-docs/count-7-days"),
-        API.get("/insurance-docs/count-30-days"),
-        API.get("/insurance-docs/count-claims"),
-        API.get("/insurance-docs/count_total_docs"),
-      ]);
+      valid,
+      expired,
+      seven,
+      fifteen,
+      thirty,
+      claims,
+      total
+        ] = await Promise.all([
+      API.get("/insurance-docs/count-valid"),
+      API.get("/insurance-docs/count-expired"),
+      API.get("/insurance-docs/count-7-days"),
+      API.get("/insurance-docs/count-15-days"),
+      API.get("/insurance-docs/count-30-days"),
+      API.get("/insurance-docs/count-claims"),
+      API.get("/insurance-docs/count_total_docs"),
+        ]);
 
       const newCounts = {
-        valid: valid.data.total_valid_documents,
-        expired: expired.data.total_expired_documents,
-        seven: seven.data.expiring_in_7_days,
-        thirty: thirty.data.expiring_in_30_days,
-        claims: claims.data.active_claims_count,
-        total: total.data.total_documents_tracked,
+      valid: valid.data.total_valid_documents,
+      expired: expired.data.total_expired_documents,
+      seven: seven.data.expiring_in_7_days,
+      fifteen: fifteen.data.expiring_in_15_days,
+      thirty: thirty.data.expiring_in_30_days,
+      claims: claims.data.active_claims_count,
+      total: total.data.total_documents_tracked,
       };
+
 
       setCounts(newCounts);
 
@@ -144,7 +149,7 @@ const Dashboard = () => {
             )
           }
         >
-          ✅ ALL Docs OK Vehicles
+          ✅ALL Docs OK Vehicles
         </button>
 
         <button
@@ -158,7 +163,7 @@ const Dashboard = () => {
             )
           }
         >
-          🔴 Expired Docs Vehicles
+          🔴Insurance Expired Docs Vehicles
         </button>
 
         <button
@@ -166,13 +171,26 @@ const Dashboard = () => {
           onClick={() =>
             loadData(
               "/insurance-docs/expiring-in-7-days",
-              "🟡 Expiring in 7 Days",
+              "🔴 Expiring in 7 Days",
               counts.seven,
-              "Expiring in 7 Days"
+              "🔴 Insurance Expiring in 7 Days"
             )
           }
         >
-          🟡 Expiring in 7 Days
+           🔴Insurance Expiring in 7 Days
+        </button>
+        <button
+          className="fifteen"
+          onClick={() =>
+            loadData(
+              "/insurance-docs/expiring-in-15-days",
+              "🟠 Expiring in 15 Days",
+              counts.fifteen,
+              "Expiring in 15 Days"
+            )
+          }
+        >
+           🔴Insurance Expiring in 15 Days
         </button>
 
         <button
@@ -180,13 +198,13 @@ const Dashboard = () => {
           onClick={() =>
             loadData(
               "/insurance-docs/expiring-in-30-days",
-              "🟠 Expiring in 30 Days",
+              "🟡 Expiring in 30 Days",
               counts.thirty,
               "Expiring in 30 Days"
             )
           }
         >
-          🟠 Expiring in 30 Days
+           🟡Insurance Expiring in 30 Days
         </button>
 
         <button
@@ -200,7 +218,7 @@ const Dashboard = () => {
             )
           }
         >
-          ⚠️ Claims Active
+          ⚠️Claims Active
         </button>
       </div>
 

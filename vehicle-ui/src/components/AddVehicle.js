@@ -31,15 +31,62 @@ const AddVehicle = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const submit = async () => {
-    try {
-      await API.post("/vehicle-insurance/", form);
-      alert("Vehicle created successfully");
-    } catch (error) {
-      console.error(error);
-      alert("Error creating vehicle");
-    }
-  };
+const submit = async () => {
+  try {
+
+    // 👉 Convert empty string → null for dates
+    const payload = {
+      ...form,
+
+      sl_no: form.sl_no ? parseInt(form.sl_no) : null,
+
+      insurance_expiry_date: form.insurance_expiry_date || null,
+      permit_expiry_date: form.permit_expiry_date || null,
+      permit_authorization_date: form.permit_authorization_date || null,
+      fitness_expiry_date: form.fitness_expiry_date || null,
+      puc_expiry_date: form.puc_expiry_date || null,
+      cng_leakage_test: form.cng_leakage_test || null,
+      tax_receipt_validity_date: form.tax_receipt_validity_date || null,
+      road_tax_mv_tax: form.road_tax_mv_tax || null,
+      dl_expiry_date: form.dl_expiry_date || null,
+      rc_valid_till_date: form.rc_valid_till_date || null,
+    };
+
+    await API.post("/vehicles/", payload);
+
+
+    alert("Vehicle created successfully ✅");
+
+    // 👉 Reset form after success
+    setForm({
+      sl_no: "",
+      name: "",
+      reg_no: "",
+      policy_no: "",
+
+      insurance_expiry_date: "",
+      permit_expiry_date: "",
+      permit_authorization_date: "",
+      fitness_expiry_date: "",
+      puc_expiry_date: "",
+      cng_leakage_test: "",
+      tax_receipt_validity_date: "",
+      road_tax_mv_tax: "",
+
+      driver_dl_no: "",
+      driver_name: "",
+      dl_no: "",
+      dl_expiry_date: "",
+
+      claim: "NO",
+      rc_valid_till_date: ""
+    });
+
+  } catch (error) {
+    console.error(error.response?.data || error);
+    alert("Error creating vehicle ❌");
+  }
+};
 
   return (
     <div className="add-vehicle-container">
@@ -140,7 +187,10 @@ const AddVehicle = () => {
         </div>
       </div>
 
-  <button>Create Vehicle</button>
+  <button className="create-btn" onClick={submit}>
+    Create Vehicle
+  </button>
+
 </div>
 
   );

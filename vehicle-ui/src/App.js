@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import AddVehicle from "./components/AddVehicle";
 import VehicleList from "./components/VehicleList";
+import Summary from "./components/Summary";
 
 import "./App.css";
 
@@ -24,6 +25,10 @@ function App() {
         <NavLink to="/list">
           Vehicle List
         </NavLink>
+
+        <NavLink to="/summary">
+          Summary
+        </NavLink>
       </nav>
 
       {/* ===== PAGE ROUTES ===== */}
@@ -31,6 +36,8 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/add" element={<AddVehicle />} />
         <Route path="/list" element={<VehicleList />} />
+        <Route path="/summary" element={<Summary />} />
+
       </Routes>
 
     </BrowserRouter>

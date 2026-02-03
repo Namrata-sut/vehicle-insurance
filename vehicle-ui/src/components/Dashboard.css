@@ -77,3 +77,26 @@
 .download-btn:hover {
   background: #1565c0;
 }
+.valid {
+  background-color: #d4f8d4;
+  color: #0b6623;
+  font-weight: bold;
+}
+
+.expired {
+  background-color: #ffd6d6;
+  color: #a30000;
+  font-weight: bold;
+}
+
+.seven {
+  background-color: #fff3b0;
+  color: #8a6d00;
+  font-weight: bold;
+}
+
+.thirty {
+  background-color: #ffe4b3;
+  color: #b35900;
+  font-weight: bold;
+}

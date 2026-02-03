@@ -258,33 +258,35 @@ def total_expired_documents(db: Session = Depends(get_db)):
                 total_expired += 1
                 expired_docs.append(name)
 
-        result.append({
-            "id": v.id,
-            "sl_no": v.sl_no,
-            "name": v.name,
-            "reg_no": v.reg_no,
-            "policy_no": v.policy_no,
+        # Add vehicle ONLY IF it has expired docs
+        if len(expired_docs) > 0:
 
-            "insurance_expiry_date": v.insurance_expiry_date,
-            "permit_expiry_date": v.permit_expiry_date,
-            "permit_authorization_date": v.permit_authorization_date,
-            "fitness_expiry_date": v.fitness_expiry_date,
-            "puc_expiry_date": v.puc_expiry_date,
-            "cng_leakage_test": v.cng_leakage_test,
-            "tax_receipt_validity_date": v.tax_receipt_validity_date,
-            "road_tax_mv_tax": v.road_tax_mv_tax,
+            result.append({
+                "sl_no": v.sl_no,
+                "name": v.name,
+                "reg_no": v.reg_no,
+                "policy_no": v.policy_no,
 
-            "driver_dl_no": v.driver_dl_no,
-            "driver_name": v.driver_name,
-            "dl_no": v.dl_no,
-            "dl_expiry_date": v.dl_expiry_date,
+                "insurance_expiry_date": v.insurance_expiry_date,
+                "permit_expiry_date": v.permit_expiry_date,
+                "permit_authorization_date": v.permit_authorization_date,
+                "fitness_expiry_date": v.fitness_expiry_date,
+                "puc_expiry_date": v.puc_expiry_date,
+                "cng_leakage_test": v.cng_leakage_test,
+                "tax_receipt_validity_date": v.tax_receipt_validity_date,
+                "road_tax_mv_tax": v.road_tax_mv_tax,
 
-            "claim": v.claim,
-            "rc_valid_till_date": v.rc_valid_till_date,
+                "driver_dl_no": v.driver_dl_no,
+                "driver_name": v.driver_name,
+                "dl_no": v.dl_no,
+                "dl_expiry_date": v.dl_expiry_date,
 
-            "expired_documents": expired_docs,
-            "expired_count": len(expired_docs)
-        })
+                "claim": v.claim,
+                "rc_valid_till_date": v.rc_valid_till_date,
+
+                "expired_documents": expired_docs,
+                "expired_count": len(expired_docs)
+            })
 
     return {
         "total_expired_documents": total_expired,
@@ -355,6 +357,73 @@ def expiring_in_7_days(db: Session = Depends(get_db)):
 
     return {
         "expiring_in_7_days": total_expiring,
+        "vehicles": result
+    }
+
+@router.get("/expiring-in-15-days")
+def expiring_in_15_days(db: Session = Depends(get_db)):
+
+    today = date.today()
+    next_15 = today + timedelta(days=15)
+
+    total_expiring = 0
+    result = []
+
+    vehicles = db.query(VehicleInsurance).all()
+
+    for v in vehicles:
+
+        all_dates = {
+            "insurance_expiry_date": v.insurance_expiry_date,
+            "permit_expiry_date": v.permit_expiry_date,
+            "permit_authorization_date": v.permit_authorization_date,
+            "fitness_expiry_date": v.fitness_expiry_date,
+            "puc_expiry_date": v.puc_expiry_date,
+            "cng_leakage_test": v.cng_leakage_test,
+            "tax_receipt_validity_date": v.tax_receipt_validity_date,
+            "road_tax_mv_tax": v.road_tax_mv_tax,
+            "dl_expiry_date": v.dl_expiry_date,
+            "rc_valid_till_date": v.rc_valid_till_date
+        }
+
+        expiring_docs = []
+
+        for name, d in all_dates.items():
+            if d and today <= d <= next_15:
+                total_expiring += 1
+                expiring_docs.append(name)
+
+        if expiring_docs:
+            result.append({
+                "id": v.id,
+                "sl_no": v.sl_no,
+                "name": v.name,
+                "reg_no": v.reg_no,
+                "policy_no": v.policy_no,
+
+                "insurance_expiry_date": v.insurance_expiry_date,
+                "permit_expiry_date": v.permit_expiry_date,
+                "permit_authorization_date": v.permit_authorization_date,
+                "fitness_expiry_date": v.fitness_expiry_date,
+                "puc_expiry_date": v.puc_expiry_date,
+                "cng_leakage_test": v.cng_leakage_test,
+                "tax_receipt_validity_date": v.tax_receipt_validity_date,
+                "road_tax_mv_tax": v.road_tax_mv_tax,
+
+                "driver_dl_no": v.driver_dl_no,
+                "driver_name": v.driver_name,
+                "dl_no": v.dl_no,
+                "dl_expiry_date": v.dl_expiry_date,
+
+                "claim": v.claim,
+                "rc_valid_till_date": v.rc_valid_till_date,
+
+                "expiring_documents": expiring_docs,
+                "expiring_count": len(expiring_docs)
+            })
+
+    return {
+        "expiring_in_15_days": total_expiring,
         "vehicles": result
     }
 

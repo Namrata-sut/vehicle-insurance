@@ -7,6 +7,43 @@ const VehicleTable = ({ vehicles }) => {
     return <p>No data available</p>;
   }
 
+  // ================= DATE HIGHLIGHT LOGIC =================
+  const getDateClass = (date) => {
+    if (!date) return "";
+
+    const today = new Date();
+    const d = new Date(date);
+
+    const diff = (d - today) / (1000 * 60 * 60 * 24);
+
+    if (d < today) return "expired";   // 🔴
+    if (diff <= 7) return "seven";     // 🟡
+    if (diff <= 30) return "thirty";   // 🟠
+    return "valid";                    // 🟢
+  };
+
+  // 👉 NEW: Check if this date is part of VALID DOCS API
+  const isValidDocScreen = (vehicle, field) => {
+    if (!vehicle.valid_documents) return false;
+
+    return Object.keys(vehicle.valid_documents).includes(field);
+  };
+
+  const td = (vehicle, field, value) => {
+    let className = "";
+
+    // 👉 If from ALL OK screen → highlight only valid docs
+    if (isValidDocScreen(vehicle, field)) {
+      className = "valid";
+    } else {
+      className = getDateClass(value);
+    }
+
+    return <td className={className}>{value}</td>;
+  };
+
+  // ========================================================
+
   return (
     <table className="vehicle-table">
       <thead>
@@ -43,22 +80,24 @@ const VehicleTable = ({ vehicles }) => {
             <td>{v.reg_no}</td>
             <td>{v.policy_no}</td>
 
-            <td>{v.insurance_expiry_date}</td>
-            <td>{v.permit_expiry_date}</td>
-            <td>{v.permit_authorization_date}</td>
-            <td>{v.fitness_expiry_date}</td>
-            <td>{v.puc_expiry_date}</td>
-            <td>{v.cng_leakage_test}</td>
-            <td>{v.tax_receipt_validity_date}</td>
-            <td>{v.road_tax_mv_tax}</td>
+            {td(v, "insurance_expiry_date", v.insurance_expiry_date)}
+            {td(v, "permit_expiry_date", v.permit_expiry_date)}
+            {td(v, "permit_authorization_date", v.permit_authorization_date)}
+            {td(v, "fitness_expiry_date", v.fitness_expiry_date)}
+            {td(v, "puc_expiry_date", v.puc_expiry_date)}
+            {td(v, "cng_leakage_test", v.cng_leakage_test)}
+            {td(v, "tax_receipt_validity_date", v.tax_receipt_validity_date)}
+            {td(v, "road_tax_mv_tax", v.road_tax_mv_tax)}
 
             <td>{v.driver_dl_no}</td>
             <td>{v.driver_name}</td>
             <td>{v.dl_no}</td>
-            <td>{v.dl_expiry_date}</td>
+
+            {td(v, "dl_expiry_date", v.dl_expiry_date)}
 
             <td>{v.claim}</td>
-            <td>{v.rc_valid_till_date}</td>
+
+            {td(v, "rc_valid_till_date", v.rc_valid_till_date)}
           </tr>
         ))}
       </tbody>

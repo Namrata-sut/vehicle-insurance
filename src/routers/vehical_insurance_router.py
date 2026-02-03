@@ -100,3 +100,52 @@ def total_tax_receipt_expired(db: Session = Depends(get_db)):
 def total_rc_expired(db: Session = Depends(get_db)):
     return get_expired_records(db, VehicleInsurance.rc_valid_till_date)
 
+@router.get("/expired/details")
+def all_expired_details(db: Session = Depends(get_db)):
+
+    today = date.today()
+
+    def get(column):
+        return db.query(VehicleInsurance).filter(column < today).all()
+
+    def serialize(vehicles):
+        return [
+            {
+                "id": v.id,
+                "sl_no": v.sl_no,
+                "name": v.name,
+                "reg_no": v.reg_no,
+                "policy_no": v.policy_no,
+
+                "insurance_expiry_date": v.insurance_expiry_date,
+                "permit_expiry_date": v.permit_expiry_date,
+                "permit_authorization_date": v.permit_authorization_date,
+                "fitness_expiry_date": v.fitness_expiry_date,
+                "puc_expiry_date": v.puc_expiry_date,
+                "cng_leakage_test": v.cng_leakage_test,
+                "tax_receipt_validity_date": v.tax_receipt_validity_date,
+                "road_tax_mv_tax": v.road_tax_mv_tax,
+
+                "driver_name": v.driver_name,
+                "driver_dl_no": v.driver_dl_no,
+                "dl_no": v.dl_no,
+                "dl_expiry_date": v.dl_expiry_date,
+
+                "claim": v.claim,
+                "rc_valid_till_date": v.rc_valid_till_date
+            }
+            for v in vehicles
+        ]
+
+    return {
+        "insurance": serialize(get(VehicleInsurance.insurance_expiry_date)),
+        "permit": serialize(get(VehicleInsurance.permit_expiry_date)),
+        "permit_auth": serialize(get(VehicleInsurance.permit_authorization_date)),
+        "fitness": serialize(get(VehicleInsurance.fitness_expiry_date)),
+        "road_tax": serialize(get(VehicleInsurance.road_tax_mv_tax)),
+        "puc": serialize(get(VehicleInsurance.puc_expiry_date)),
+        "cng": serialize(get(VehicleInsurance.cng_leakage_test)),
+        "driver_dl": serialize(get(VehicleInsurance.dl_expiry_date)),
+        "tax_receipt": serialize(get(VehicleInsurance.tax_receipt_validity_date)),
+        "rc": serialize(get(VehicleInsurance.rc_valid_till_date)),
+    }
