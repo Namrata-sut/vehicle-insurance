@@ -45,3 +45,51 @@
 .vehicle-table td {
   border: 1px solid #ccc;
 }
+
+/* ===== TOP BAR ===== */
+.top-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* ===== UPDATE BUTTON ===== */
+.update-btn {
+  padding: 8px 16px;
+  margin-right: 10px;
+
+  background-color: #1565c0;   /* LIGHTER DARK BLUE */
+  border: 1px solid #1357a6;
+  color: white;
+
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.update-btn:hover {
+  background-color: #0f4fa3;
+}
+
+.update-btn:disabled {
+  background-color: #aab8c2;
+  border: 1px solid #aab8c2;
+  cursor: not-allowed;
+}
+
+
+/* ===== DOWNLOAD BUTTON ===== */
+.download-btn {
+  padding: 8px 16px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.download-btn:hover {
+  background: #0d5bb5;
+}
+
