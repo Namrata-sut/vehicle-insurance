@@ -2,12 +2,16 @@ import React, { useState, useEffect } from "react";
 import API from "../services/api";
 import VehicleTable from "./VehicleTable";
 import VehicleList from "./VehicleList";
+import InsuranceExpiryTable from "./InsuranceExpiryTable";
+
 import "./Dashboard.css";
 
 const Dashboard = () => {
 
   const [vehicles, setVehicles] = useState([]);
   const [title, setTitle] = useState("");
+  const [tableMode, setTableMode] = useState("full");
+  // full | simple
 
   const [showVehicleList, setShowVehicleList] = useState(false);
 
@@ -84,20 +88,22 @@ const Dashboard = () => {
 };
 
   // ================= LOAD TABLE DATA =================
-  const loadData = (url, titleText, countValue, label) => {
+const loadData = (url, titleText, countValue, label, mode = "full") => {
 
-    setTitle(titleText);
-    setShowVehicleList(false);
+  setTitle(titleText);
+  setShowVehicleList(false);
+  setTableMode(mode);
 
-    API.get(url)
-      .then((res) => {
-        setVehicles(res.data.vehicles);
+  API.get(url)
+    .then((res) => {
+      setVehicles(res.data.vehicles);
 
-        setCurrentCount(countValue);
-        setCurrentLabel(label);
-      })
-      .catch(() => alert("Error loading data"));
-  };
+      setCurrentCount(countValue);
+      setCurrentLabel(label);
+    })
+    .catch(() => alert("Error loading data"));
+};
+
 
   // ================= FIRST BUTTON =================
   const showTotalDocsTracked = (freshCounts = counts) => {
@@ -180,7 +186,7 @@ const Dashboard = () => {
             )
           }
         >
-          🔴Insurance Expired Docs Vehicles
+          🔴 Expired Docs Vehicles
         </button>
 
         <button
@@ -190,12 +196,14 @@ const Dashboard = () => {
               "/insurance-docs/expiring-in-7-days",
               "🔴 Expiring in 7 Days",
               counts.seven,
-              "🔴 Insurance Expiring in 7 Days"
+              "🔴 Insurance Expiring in 7 Days",
+              "simple"
             )
           }
         >
            🔴Insurance Expiring in 7 Days
         </button>
+
         <button
           className="fifteen"
           onClick={() =>
@@ -203,7 +211,8 @@ const Dashboard = () => {
               "/insurance-docs/expiring-in-15-days",
               "🟠 Expiring in 15 Days",
               counts.fifteen,
-              "Expiring in 15 Days"
+              "Insurance Expiring in 15 Days",
+              "simple"
             )
           }
         >
@@ -217,7 +226,8 @@ const Dashboard = () => {
               "/insurance-docs/expiring-in-30-days",
               "🟡 Expiring in 30 Days",
               counts.thirty,
-              "Expiring in 30 Days"
+              "Insurance Expiring in 30 Days",
+              "simple"
             )
           }
         >
@@ -255,7 +265,11 @@ const Dashboard = () => {
         </>
       ) : (
         <>
-          <VehicleTable vehicles={vehicles} />
+            {tableMode === "simple" ? (
+              <InsuranceExpiryTable vehicles={vehicles} />
+            ) : (
+              <VehicleTable vehicles={vehicles} />
+            )}
 
           <button className="download-btn" onClick={downloadCSV}>
             ⬇ Download Data
