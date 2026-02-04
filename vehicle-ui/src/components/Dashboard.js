@@ -3,6 +3,7 @@ import API from "../services/api";
 import VehicleTable from "./VehicleTable";
 import VehicleList from "./VehicleList";
 import InsuranceExpiryTable from "./InsuranceExpiryTable";
+import * as XLSX from "xlsx-js-style";
 
 import "./Dashboard.css";
 
@@ -123,33 +124,143 @@ const loadData = (url, titleText, countValue, label, mode = "full") => {
   };
 
   // ================= DOWNLOAD CSV =================
-  const downloadCSV = () => {
+    const getColorStyle = (date) => {
+      if (!date) return {};
 
-    if (!vehicles || vehicles.length === 0) {
-      alert("No data to download");
-      return;
-    }
+      const today = new Date();
+      const d = new Date(date);
 
-    const headers = Object.keys(vehicles[0]).join(",");
+      const diff = (d - today) / (1000 * 60 * 60 * 24);
 
-    const rows = vehicles
-      .map((v) =>
-        Object.values(v)
-          .map((val) => `"${val}"`)
-          .join(",")
-      )
-      .join("\n");
+      // 🔴 expired
+      if (d < today) {
+        return { fill: { fgColor: { rgb: "FFCDD2" } } };
+      }
 
-    const csv = headers + "\n" + rows;
+      // 🟡 within 7 days
+      if (diff <= 7) {
+        return { fill: { fgColor: { rgb: "FFF9C4" } } };
+      }
 
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
+      // 🟠 within 30 days
+      if (diff <= 30) {
+        return { fill: { fgColor: { rgb: "FFE0B2" } } };
+      }
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "vehicle_insurance_data.csv";
-    a.click();
-  };
+      // 🟢 valid
+      return { fill: { fgColor: { rgb: "C8E6C9" } } };
+    };
+
+    const formatDate = (date) => {
+      if (!date) return "";
+      return new Date(date).toLocaleDateString("en-GB");
+    };
+    // ===== COMMON HEADER STYLE FUNCTION =====
+    const applyHeaderStyle = (ws) => {
+
+      const range = XLSX.utils.decode_range(ws["!ref"]);
+
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+
+        const address = XLSX.utils.encode_cell({ r: 0, c: C });
+
+        if (!ws[address]) continue;
+
+        ws[address].s = {
+          font: {
+            bold: true,
+            color: { rgb: "000000" }
+          },
+          fill: {
+            fgColor: { rgb: "BBDEFB" }   // 👉 LIGHT BLUE
+          },
+          alignment: {
+            horizontal: "center",
+            vertical: "center"
+          }
+        };
+      }
+    };
+
+    const downloadCSV = () => {
+      if (!vehicles || vehicles.length === 0) {
+        alert("No data to download");
+        return;
+      }
+
+      let data = [];
+      let ws;
+
+      // ===== 7 / 15 / 30 DAYS SCREENS =====
+      if (
+        title.includes("7 Days") ||
+        title.includes("15 Days") ||
+        title.includes("30 Days")
+      ) {
+
+        data = vehicles.map(v => ({
+          "SL No": v.sl_no,
+          "Name": v.name,
+          "Reg No": v.reg_no,
+          "Policy No": v.policy_no,
+          "Insurance Expiry": formatDate(v.insurance_expiry_date),
+        }));
+
+        ws = XLSX.utils.json_to_sheet(data);
+
+        // ✅ APPLY HEADER STYLE
+        applyHeaderStyle(ws);
+
+        vehicles.forEach((v, i) => {
+          const style = getColorStyle(v.insurance_expiry_date);
+          ws[`E${i + 2}`].s = style;
+        });
+      }
+
+      // ===== TOTAL + ALL OK + EXPIRED + CLAIMS =====
+      else {
+
+        data = vehicles.map(v => ({
+          "SL No": v.sl_no,
+          "Name": v.name,
+          "Reg No": v.reg_no,
+          "Policy No": v.policy_no,
+
+          "Insurance Expiry": formatDate(v.insurance_expiry_date),
+          "Permit Expiry": formatDate(v.permit_expiry_date),
+          "Fitness Expiry": formatDate(v.fitness_expiry_date),
+          "PUC Expiry": formatDate(v.puc_expiry_date),
+
+          "Driver Name": v.driver_name,
+          "DL Expiry": formatDate(v.dl_expiry_date),
+
+          "Claim": v.claim,
+          "RC Valid Till": formatDate(v.rc_valid_till_date),
+        }));
+
+        ws = XLSX.utils.json_to_sheet(data);
+
+        // ✅ APPLY HEADER STYLE HERE ALSO
+        applyHeaderStyle(ws);
+
+        vehicles.forEach((v, i) => {
+          ws[`E${i + 2}`].s = getColorStyle(v.insurance_expiry_date);
+          ws[`F${i + 2}`].s = getColorStyle(v.permit_expiry_date);
+          ws[`G${i + 2}`].s = getColorStyle(v.fitness_expiry_date);
+          ws[`H${i + 2}`].s = getColorStyle(v.puc_expiry_date);
+          ws[`J${i + 2}`].s = getColorStyle(v.dl_expiry_date);
+          ws[`L${i + 2}`].s = getColorStyle(v.rc_valid_till_date);
+        });
+      }
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Vehicles");
+
+      XLSX.writeFile(
+        wb,
+        `${title.replace(/[^a-zA-Z0-9]/g, "_")}.xlsx`
+      );
+    };
 
   // ================= UI =================
   return (

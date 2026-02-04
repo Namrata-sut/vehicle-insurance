@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import API from "../services/api";
+import * as XLSX from "xlsx-js-style";
 import "./VehicleList.css";
 
 function VehicleList() {
@@ -18,9 +19,76 @@ function VehicleList() {
     }
   };
 
+  // =============== DOWNLOAD EXCEL ===============
+  const downloadExcel = () => {
+    if (!vehicles || vehicles.length === 0) {
+      alert("No data to download");
+      return;
+    }
+
+    const data = vehicles.map(v => ({
+      "SL No": v.sl_no,
+      "Name": v.name,
+      "Reg No": v.reg_no,
+      "Policy No": v.policy_no,
+
+      "Insurance Expiry": v.insurance_expiry_date,
+      "Permit Expiry": v.permit_expiry_date,
+      "Permit Authorization": v.permit_authorization_date,
+      "Fitness Expiry": v.fitness_expiry_date,
+      "PUC Expiry": v.puc_expiry_date,
+      "CNG Leakage Test": v.cng_leakage_test,
+      "Tax Receipt Validity": v.tax_receipt_validity_date,
+      "Road Tax": v.road_tax_mv_tax,
+
+      "Driver DL No": v.driver_dl_no,
+      "Driver Name": v.driver_name,
+      "DL No": v.dl_no,
+      "DL Expiry": v.dl_expiry_date,
+
+      "Claim": v.claim,
+      "RC Valid Till": v.rc_valid_till_date,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(data);
+
+    // ===== HEADER STYLE : BOLD + BLUE =====
+    const range = XLSX.utils.decode_range(ws["!ref"]);
+
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const address = XLSX.utils.encode_cell({ r: 0, c: C });
+
+      if (!ws[address]) continue;
+
+      ws[address].s = {
+        font: {
+          bold: true,
+          color: { rgb: "000000" }
+        },
+        fill: {
+          fgColor: { rgb: "BBDEFB" }   // LIGHT BLUE
+        },
+        alignment: {
+          horizontal: "center",
+          vertical: "center"
+        }
+      };
+    }
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Vehicles");
+
+    XLSX.writeFile(wb, "Vehicle_List.xlsx");
+  };
+
   return (
     <div className="vehicle-container">
       <h2>Vehicle Insurance Details</h2>
+
+      {/* 👉 DOWNLOAD BUTTON */}
+      <button className="download-btn" onClick={downloadExcel}>
+        ⬇ Download Data
+      </button>
 
       <table className="vehicle-table">
         <thead>

@@ -33,3 +33,15 @@
 .vehicle-table tr:hover {
   background-color: #f1f1f1;
 }
+
+/* ===== HEADER STYLE ===== */
+.vehicle-table th {
+  background-color: #BBDEFB;   /* light blue */
+  font-weight: bold;
+  border: 1px solid #aaa;
+}
+
+/* Table border already present – keeping same */
+.vehicle-table td {
+  border: 1px solid #ccc;
+}
