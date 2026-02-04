@@ -5,6 +5,7 @@ import Dashboard from "./components/Dashboard";
 import AddVehicle from "./components/AddVehicle";
 import VehicleList from "./components/VehicleList";
 import Summary from "./components/Summary";
+import Upload from "./components/Upload";
 
 import "./App.css";
 
@@ -29,6 +30,11 @@ function App() {
         <NavLink to="/summary">
           Summary
         </NavLink>
+
+        <NavLink to="/upload">
+          Upload
+        </NavLink>
+
       </nav>
 
       {/* ===== PAGE ROUTES ===== */}
@@ -37,6 +43,7 @@ function App() {
         <Route path="/add" element={<AddVehicle />} />
         <Route path="/list" element={<VehicleList />} />
         <Route path="/summary" element={<Summary />} />
+        <Route path="/upload" element={<Upload />} />
 
       </Routes>
 

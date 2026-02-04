@@ -33,8 +33,8 @@ const Dashboard = () => {
 
   // ================= FETCH ALL COUNTS =================
   const loadCounts = async () => {
-    try {
-      const [
+  try {
+    const [
       valid,
       expired,
       seven,
@@ -42,36 +42,46 @@ const Dashboard = () => {
       thirty,
       claims,
       total
-        ] = await Promise.all([
+    ] = await Promise.all([
       API.get("/insurance-docs/count-valid"),
       API.get("/insurance-docs/count-expired"),
       API.get("/insurance-docs/count-7-days"),
-      API.get("/insurance-docs/count-15-days"),
-      API.get("/insurance-docs/count-30-days"),
+
+      // 🔥 FIXED ENDPOINTS
+      API.get("/insurance-docs/expiring-in-15-days"),
+      API.get("/insurance-docs/expiring-in-30-days"),
+
       API.get("/insurance-docs/count-claims"),
       API.get("/insurance-docs/count_total_docs"),
-        ]);
+    ]);
 
-      const newCounts = {
+    console.log("7 days:", seven.data);
+    console.log("15 days:", fifteen.data);
+    console.log("30 days:", thirty.data);
+
+    const newCounts = {
       valid: valid.data.total_valid_documents,
       expired: expired.data.total_expired_documents,
+
       seven: seven.data.expiring_in_7_days,
+
+      // 🔥 CORRECT KEYS
       fifteen: fifteen.data.expiring_in_15_days,
       thirty: thirty.data.expiring_in_30_days,
+
       claims: claims.data.active_claims_count,
+
       total: total.data.total_documents_tracked,
-      };
+    };
 
+    setCounts(newCounts);
 
-      setCounts(newCounts);
+    showTotalDocsTracked(newCounts);
 
-      // 👉 default load total after counts ready
-      showTotalDocsTracked(newCounts);
-
-    } catch (err) {
-      console.error("Error loading counts", err);
-    }
-  };
+  } catch (err) {
+    console.error("Error loading counts", err);
+  }
+};
 
   // ================= LOAD TABLE DATA =================
   const loadData = (url, titleText, countValue, label) => {
@@ -92,11 +102,18 @@ const Dashboard = () => {
   // ================= FIRST BUTTON =================
   const showTotalDocsTracked = (freshCounts = counts) => {
 
-    setTitle("📄 Total Documents Tracked");
-    setShowVehicleList(true);
+  setTitle("📄 Total Documents Tracked");
+  setShowVehicleList(false);   // 👉 show table not list
 
-    setCurrentCount(freshCounts.total);
-    setCurrentLabel("Total Documents");
+  setCurrentCount(freshCounts.total);
+  setCurrentLabel("Total Documents");
+
+  // 👉 LOAD ALL VEHICLES BY DEFAULT
+  API.get("/insurance-docs/total-valid-docs")
+    .then((res) => {
+      setVehicles(res.data.vehicles);
+    })
+    .catch(() => alert("Error loading total vehicles"));
   };
 
   // ================= DOWNLOAD CSV =================
@@ -190,7 +207,7 @@ const Dashboard = () => {
             )
           }
         >
-           🔴Insurance Expiring in 15 Days
+           🟠Insurance Expiring in 15 Days
         </button>
 
         <button
