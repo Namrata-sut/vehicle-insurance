@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 import * as XLSX from "xlsx-js-style";
 import "./VehicleList.css";
 
 function VehicleList() {
   const [vehicles, setVehicles] = useState([]);
+  const [selected, setSelected] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchVehicles();
@@ -17,6 +21,15 @@ function VehicleList() {
     } catch (error) {
       console.error("Error fetching vehicles:", error);
     }
+  };
+
+  // ======= NAVIGATE TO UPDATE =======
+  const handleUpdate = () => {
+    if (!selected) return;
+
+    navigate("/update", {
+      state: { vehicle: selected }
+    });
   };
 
   // =============== DOWNLOAD EXCEL ===============
@@ -52,7 +65,6 @@ function VehicleList() {
 
     const ws = XLSX.utils.json_to_sheet(data);
 
-    // ===== HEADER STYLE : BOLD + BLUE =====
     const range = XLSX.utils.decode_range(ws["!ref"]);
 
     for (let C = range.s.c; C <= range.e.c; ++C) {
@@ -61,17 +73,9 @@ function VehicleList() {
       if (!ws[address]) continue;
 
       ws[address].s = {
-        font: {
-          bold: true,
-          color: { rgb: "000000" }
-        },
-        fill: {
-          fgColor: { rgb: "BBDEFB" }   // LIGHT BLUE
-        },
-        alignment: {
-          horizontal: "center",
-          vertical: "center"
-        }
+        font: { bold: true, color: { rgb: "000000" } },
+        fill: { fgColor: { rgb: "BBDEFB" } },
+        alignment: { horizontal: "center", vertical: "center" }
       };
     }
 
@@ -83,16 +87,29 @@ function VehicleList() {
 
   return (
     <div className="vehicle-container">
-      <h2>Vehicle Insurance Details</h2>
 
-      {/* 👉 DOWNLOAD BUTTON */}
-      <button className="download-btn" onClick={downloadExcel}>
-        ⬇ Download Data
-      </button>
+      <div className="top-actions">
+        <h2>Vehicle Insurance Details</h2>
+
+        <div>
+          <button
+            className="update-btn"
+            disabled={!selected}
+            onClick={handleUpdate}
+          >
+            ✏ Update
+          </button>
+
+          <button className="download-btn" onClick={downloadExcel}>
+            ⬇ Download Data
+          </button>
+        </div>
+      </div>
 
       <table className="vehicle-table">
         <thead>
           <tr>
+            <th>Select</th>
             <th>SL No</th>
             <th>Name</th>
             <th>Reg No</th>
@@ -120,6 +137,14 @@ function VehicleList() {
         <tbody>
           {vehicles.map((v) => (
             <tr key={v.id}>
+              <td>
+                <input
+                  type="radio"
+                  name="selectRow"
+                  onChange={() => setSelected(v)}
+                />
+              </td>
+
               <td>{v.sl_no}</td>
               <td>{v.name}</td>
               <td>{v.reg_no}</td>

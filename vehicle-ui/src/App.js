@@ -6,6 +6,7 @@ import AddVehicle from "./components/AddVehicle";
 import VehicleList from "./components/VehicleList";
 import Summary from "./components/Summary";
 import Upload from "./components/Upload";
+import UpdateVehicle from "./components/UpdateVehicle";
 
 import "./App.css";
 
@@ -44,6 +45,7 @@ function App() {
         <Route path="/list" element={<VehicleList />} />
         <Route path="/summary" element={<Summary />} />
         <Route path="/upload" element={<Upload />} />
+        <Route path="/update" element={<UpdateVehicle />} />
 
       </Routes>
 

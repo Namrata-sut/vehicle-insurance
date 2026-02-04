@@ -39,3 +39,30 @@ def get_vehicle_by_reg_no(reg_no: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Vehicle not found")
     return vehicle
 
+from src.schemas.vehical_insurance import VehicleInsuranceUpdate
+
+
+@router.patch("/{reg_no}", response_model=VehicleInsuranceResponse)
+def partial_update_vehicle(
+    reg_no: str,
+    data: VehicleInsuranceUpdate,
+    db: Session = Depends(get_db)
+):
+
+    vehicle = db.query(VehicleInsurance).filter(
+        VehicleInsurance.reg_no == reg_no
+    ).first()
+
+    if not vehicle:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+
+    update_data = data.model_dump(exclude_unset=True)
+
+    # 👉 Only update provided fields
+    for key, value in update_data.items():
+        setattr(vehicle, key, value)
+
+    db.commit()
+    db.refresh(vehicle)
+
+    return vehicle
