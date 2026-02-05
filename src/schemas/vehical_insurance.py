@@ -5,6 +5,7 @@ from datetime import date
 
 class VehicleInsuranceCreate(BaseModel):
     sl_no: int
+    company_name: str
     name: str
     reg_no: str
     policy_no: str

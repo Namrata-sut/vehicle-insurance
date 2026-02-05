@@ -6,6 +6,7 @@ const AddVehicle = () => {
   const [form, setForm] = useState({
     sl_no: "",
     name: "",
+    company_name: "",
     reg_no: "",
     policy_no: "",
 
@@ -39,7 +40,6 @@ const submit = async () => {
       ...form,
 
       sl_no: form.sl_no ? parseInt(form.sl_no) : null,
-
       insurance_expiry_date: form.insurance_expiry_date || null,
       permit_expiry_date: form.permit_expiry_date || null,
       permit_authorization_date: form.permit_authorization_date || null,
@@ -61,6 +61,7 @@ const submit = async () => {
     setForm({
       sl_no: "",
       name: "",
+      company_name: "",
       reg_no: "",
       policy_no: "",
 
@@ -111,6 +112,11 @@ const submit = async () => {
         <div className="form-field">
           <label>Policy No</label>
           <input name="policy_no" onChange={handleChange} />
+        </div>
+
+        <div className="form-field">
+          <label>Company Name</label>
+          <input name="company_name" onChange={handleChange} />
         </div>
 
         <div className="form-field">

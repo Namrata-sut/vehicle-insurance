@@ -49,17 +49,18 @@ function UpdateVehicle() {
     }
   };
 
-  const input = (label, name, type = "text") => (
-    <div className="form-group">
-      <label>{label}</label>
+  const input = (label, name, type = "text", disabled = false) => (
+      <div className="form-group">
+        <label>{label}</label>
 
-      <input
-        type={type}
-        name={name}
-        value={form[name] || ""}
-        onChange={handleChange}
-      />
-    </div>
+        <input
+          type={type}
+          name={name}
+          value={form[name] || ""}
+          onChange={handleChange}
+          disabled={disabled}
+        />
+      </div>
   );
 
   return (
@@ -73,9 +74,11 @@ function UpdateVehicle() {
 
         {input("Owner Name", "name")}
 
-        {input("Registration No", "reg_no")}
+        {input("Registration No", "reg_no", "text", true)}
 
-        {input("Policy No", "policy_no")}
+        {input("Policy No", "policy_no", "text", true)}
+
+        {input("Company Name", "company_name")}
 
         {input("Insurance Expiry", "insurance_expiry_date", "date")}
 

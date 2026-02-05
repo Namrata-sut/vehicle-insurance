@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from config.database_connection import get_db
 from src.models.vehical_insurance import VehicleInsurance
 from src.schemas.vehical_insurance import VehicleInsuranceCreate, VehicleInsuranceResponse
-
+from sqlalchemy.exc import IntegrityError
+from fastapi import HTTPException
 router = APIRouter(
     prefix="/vehicles",
     tags=["Vehicle"]
@@ -13,10 +14,18 @@ router = APIRouter(
 @router.post("/", response_model=VehicleInsuranceResponse)
 def create_vehicle(data: VehicleInsuranceCreate, db: Session = Depends(get_db)):
     vehicle = VehicleInsurance(**data.model_dump())
-    db.add(vehicle)
-    db.commit()
-    db.refresh(vehicle)
-    return vehicle
+    try:
+        db.add(vehicle)
+        db.commit()
+        db.refresh(vehicle)
+        return vehicle
+
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail="Registration number or Policy number already exists"
+        )
 
 # READ ALL
 @router.get("/", response_model=list[VehicleInsuranceResponse])

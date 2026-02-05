@@ -6,9 +6,11 @@ class VehicleInsurance(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     sl_no = Column(Integer, nullable=False)
-    name = Column(String, nullable=False)
-    reg_no = Column(String, nullable=False, unique=True)
-    policy_no = Column(String, nullable=False)
+    company_name = Column(String(100))
+
+    name = Column(String(100), nullable=False)
+    reg_no = Column(String(50),nullable=False, unique=True)
+    policy_no = Column(String(50),nullable=False, unique=True)
 
     insurance_expiry_date = Column(Date)
     permit_expiry_date = Column(Date)
