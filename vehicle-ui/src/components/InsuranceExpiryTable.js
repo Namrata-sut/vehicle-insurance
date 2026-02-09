@@ -12,10 +12,11 @@ const ExpirySimpleTable = ({ vehicles }) => {
       <thead>
         <tr>
           <th>SL No</th>
-          <th>Name</th>
           <th>Reg No</th>
+          <th>Name</th>
           <th>Policy No</th>
           <th>Insurance Expiry</th>
+          <th>Company Name</th>
         </tr>
       </thead>
 
@@ -23,10 +24,11 @@ const ExpirySimpleTable = ({ vehicles }) => {
         {vehicles.map((v) => (
           <tr key={v.id}>
             <td>{v.sl_no}</td>
-            <td>{v.name}</td>
             <td>{v.reg_no}</td>
+            <td>{v.name}</td>
             <td>{v.policy_no}</td>
             <td>{v.insurance_expiry_date}</td>
+            <td>{v.company_name}</td>
           </tr>
         ))}
       </tbody>

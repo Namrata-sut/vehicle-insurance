@@ -38,6 +38,7 @@ class VehicleInsuranceUpdate(BaseModel):
 
     sl_no: Optional[int] = None
     name: Optional[str] = None
+    company_name: Optional[str] = None
     reg_no: Optional[str] = None
     policy_no: Optional[str] = None
 

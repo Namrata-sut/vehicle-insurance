@@ -114,6 +114,7 @@ def all_expired_details(db: Session = Depends(get_db)):
                 "id": v.id,
                 "sl_no": v.sl_no,
                 "name": v.name,
+                "company_name": v.company_name,
                 "reg_no": v.reg_no,
                 "policy_no": v.policy_no,
 

@@ -44,6 +44,7 @@ function VehicleList() {
       "Name": v.name,
       "Reg No": v.reg_no,
       "Policy No": v.policy_no,
+      "Company Name": v.company_name,
 
       "Insurance Expiry": v.insurance_expiry_date,
       "Permit Expiry": v.permit_expiry_date,
@@ -112,6 +113,7 @@ function VehicleList() {
             <th>Select</th>
             <th>SL No</th>
             <th>Name</th>
+            <th>Company Name</th>
             <th>Reg No</th>
             <th>Policy No</th>
 
@@ -147,6 +149,7 @@ function VehicleList() {
 
               <td>{v.sl_no}</td>
               <td>{v.name}</td>
+              <td>{v.company_name}</td>
               <td>{v.reg_no}</td>
               <td>{v.policy_no}</td>
 

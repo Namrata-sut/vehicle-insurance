@@ -201,6 +201,7 @@ const loadData = (url, titleText, countValue, label, mode = "full") => {
         data = vehicles.map(v => ({
           "SL No": v.sl_no,
           "Name": v.name,
+          "Company Name": v.company_name,
           "Reg No": v.reg_no,
           "Policy No": v.policy_no,
           "Insurance Expiry": formatDate(v.insurance_expiry_date),
@@ -223,6 +224,7 @@ const loadData = (url, titleText, countValue, label, mode = "full") => {
         data = vehicles.map(v => ({
           "SL No": v.sl_no,
           "Name": v.name,
+          "Company Name": v.company_name,
           "Reg No": v.reg_no,
           "Policy No": v.policy_no,
 

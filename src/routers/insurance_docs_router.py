@@ -197,6 +197,7 @@ def total_valid_documents(db: Session = Depends(get_db)):
         result.append({
             "id": v.id,
             "sl_no": v.sl_no,
+            "company_name": v.company_name,
             "name": v.name,
             "reg_no": v.reg_no,
             "policy_no": v.policy_no,
@@ -264,6 +265,7 @@ def total_expired_documents(db: Session = Depends(get_db)):
             result.append({
                 "sl_no": v.sl_no,
                 "name": v.name,
+                "company_name": v.company_name,
                 "reg_no": v.reg_no,
                 "policy_no": v.policy_no,
 
@@ -331,6 +333,7 @@ def expiring_in_7_days(db: Session = Depends(get_db)):
                 "id": v.id,
                 "sl_no": v.sl_no,
                 "name": v.name,
+                "company_name": v.company_name,
                 "reg_no": v.reg_no,
                 "policy_no": v.policy_no,
 
@@ -398,6 +401,7 @@ def expiring_in_15_days(db: Session = Depends(get_db)):
                 "id": v.id,
                 "sl_no": v.sl_no,
                 "name": v.name,
+                "company_name": v.company_name,
                 "reg_no": v.reg_no,
                 "policy_no": v.policy_no,
 
@@ -465,6 +469,7 @@ def expiring_in_30_days(db: Session = Depends(get_db)):
                 "id": v.id,
                 "sl_no": v.sl_no,
                 "name": v.name,
+                "company_name": v.company_name,
                 "reg_no": v.reg_no,
                 "policy_no": v.policy_no,
 
@@ -508,6 +513,7 @@ def active_claims(db: Session = Depends(get_db)):
             "id": v.id,
             "sl_no": v.sl_no,
             "name": v.name,
+            "company_name": v.company_name,
             "reg_no": v.reg_no,
             "policy_no": v.policy_no,
 

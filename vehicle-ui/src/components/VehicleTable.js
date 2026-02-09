@@ -50,6 +50,7 @@ const VehicleTable = ({ vehicles }) => {
         <tr>
           <th>SL No</th>
           <th>Name</th>
+          <th>Company Name</th>
           <th>Reg No</th>
           <th>Policy No</th>
 
@@ -77,6 +78,7 @@ const VehicleTable = ({ vehicles }) => {
           <tr key={v.id}>
             <td>{v.sl_no}</td>
             <td>{v.name}</td>
+            <td>{v.company_name}</td>
             <td>{v.reg_no}</td>
             <td>{v.policy_no}</td>
 
