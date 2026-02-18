@@ -34,7 +34,6 @@ const Summary = () => {
     { key: "driver_dl", label: "TOTAL DRIVER DL NO. / EXPIRED" },
     { key: "tax_receipt", label: "TOTAL TAX RECEIPT VALIDITY EXPIRED" },
     { key: "rc", label: "TOTAL RC EXPIRED" },
-    { key: "claims", label: "TOTAL ACTIVE CLAIMS" },
   ];
 
   const list = data?.[tab] || [];
@@ -48,6 +47,7 @@ const Summary = () => {
       return (
         <>
           <th>REG. NO.</th>
+          <th>Name</th>
           <th>POLICY NO.</th>
           <th>INSURANCE EXPIRY DATE</th>
           <th>Company Name</th>
@@ -55,6 +55,7 @@ const Summary = () => {
           {list.map(v => (
             <tr key={v.id}>
               <td>{v.reg_no}</td>
+              <td>{v.name}</td>
               <td>{v.policy_no}</td>
               <td className={isExpired(v.insurance_expiry_date) ? "expired" : ""}>
                 {v.insurance_expiry_date}
@@ -71,6 +72,7 @@ const Summary = () => {
       return (
         <>
           <th>REG. NO.</th>
+          <th>Name</th>
           <th>PERMIT EXPIRY DATE</th>
 
           {list.map(v => (
@@ -90,6 +92,7 @@ const Summary = () => {
       return (
         <>
           <th>REG. NO.</th>
+          <th>Name</th>
           <th>PERMIT AUTHORIZATION DATE</th>
 
           {list.map(v => (
@@ -109,6 +112,7 @@ const Summary = () => {
       return (
         <>
           <th>REG. NO.</th>
+          <th>Name</th>
           <th>FITNESS EXPIRY DATE</th>
 
           {list.map(v => (
@@ -128,6 +132,7 @@ const Summary = () => {
       return (
         <>
           <th>REG. NO.</th>
+          <th>Name</th>
           <th>ROAD TAX / MV TAX</th>
 
           {list.map(v => (
@@ -147,6 +152,7 @@ const Summary = () => {
       return (
         <>
           <th>REG. NO.</th>
+          <th>Name</th>
           <th>PUC EXPIRY DATE</th>
 
           {list.map(v => (
@@ -166,6 +172,7 @@ const Summary = () => {
       return (
         <>
           <th>REG. NO.</th>
+          <th>Name</th>
           <th>CNG LEAKAGE TEST</th>
 
           {list.map(v => (
@@ -185,6 +192,7 @@ const Summary = () => {
       return (
         <>
           <th>REG. NO.</th>
+          <th>Name</th>
           <th>DL EXPIRY DATE</th>
           <th>DRIVER DL NO.</th>
           <th>DRIVER NAME</th>
@@ -210,6 +218,7 @@ const Summary = () => {
       return (
         <>
           <th>REG. NO.</th>
+          <th>Name</th>
           <th>TAX RECEIPT VALIDITY DATE</th>
 
           {list.map(v => (
@@ -229,6 +238,7 @@ const Summary = () => {
       return (
         <>
           <th>REG. NO.</th>
+          <th>Name</th>
           <th>RC VALID TILL DATE</th>
 
           {list.map(v => (
@@ -242,24 +252,7 @@ const Summary = () => {
         </>
       );
     }
-
-    // ===== CLAIMS =====
-    if (tab === "claims") {
-      return (
-        <>
-          <th>REG. NO.</th>
-          <th>CLAIM (YES / NO)</th>
-
-          {list.map(v => (
-            <tr key={v.id}>
-              <td>{v.reg_no}</td>
-              <td>{v.claim}</td>
-            </tr>
-          ))}
-        </>
-      );
-    }
-  };
+};
 
   return (
     <div className="summary-container">
@@ -286,6 +279,7 @@ const Summary = () => {
       <tr>
         <th>SL NO</th>
         <th>REG. NO.</th>
+        <th>Name</th>
         <th>DL EXPIRY DATE</th>
         <th>DRIVER DL NO.</th>
         <th>DRIVER NAME</th>
@@ -297,6 +291,7 @@ const Summary = () => {
       <tr>
         <th>SL NO</th>
         <th>REG. NO.</th>
+        <th>Name</th>
         <th>POLICY NO.</th>
         <th>INSURANCE EXPIRY DATE</th>
         <th>Company Name</th>
@@ -307,6 +302,7 @@ const Summary = () => {
       <tr>
         <th>SL NO</th>
         <th>REG. NO.</th>
+        <th>Name</th>
         <th>PERMIT EXPIRY DATE</th>
       </tr>
     )}
@@ -315,6 +311,7 @@ const Summary = () => {
       <tr>
         <th>SL NO</th>
         <th>REG. NO.</th>
+        <th>Name</th>
         <th>PERMIT AUTHORIZATION DATE</th>
       </tr>
     )}
@@ -323,6 +320,7 @@ const Summary = () => {
       <tr>
         <th>SL NO</th>
         <th>REG. NO.</th>
+        <th>Name</th>
         <th>ROAD TAX / MV TAX</th>
       </tr>
     )}
@@ -331,6 +329,7 @@ const Summary = () => {
       <tr>
         <th>SL NO</th>
         <th>REG. NO.</th>
+        <th>Name</th>
         <th>PUC EXPIRY DATE</th>
       </tr>
     )}
@@ -339,6 +338,7 @@ const Summary = () => {
       <tr>
         <th>SL NO</th>
         <th>REG. NO.</th>
+        <th>Name</th>
         <th>CNG LEAKAGE TEST</th>
       </tr>
     )}
@@ -347,6 +347,7 @@ const Summary = () => {
       <tr>
         <th>SL NO</th>
         <th>REG. NO.</th>
+        <th>Name</th>
         <th>FITNESS EXPIRY DATE</th>
       </tr>
     )}
@@ -355,6 +356,7 @@ const Summary = () => {
       <tr>
         <th>SL NO</th>
         <th>REG. NO.</th>
+        <th>Name</th>
         <th>TAX RECEIPT VALIDITY DATE</th>
       </tr>
     )}
@@ -363,17 +365,11 @@ const Summary = () => {
       <tr>
         <th>SL NO</th>
         <th>REG. NO.</th>
+        <th>Name</th>
         <th>RC VALID TILL DATE</th>
       </tr>
     )}
 
-    {tab === "claims" && (
-      <tr>
-        <th>SL NO</th>
-        <th>REG. NO.</th>
-        <th>CLAIM (YES / NO)</th>
-      </tr>
-    )}
   </thead>
 
   {/* ===== ROWS ===== */}
@@ -384,7 +380,7 @@ const Summary = () => {
             <tr key={v.id}>
               <td>{i + 1}</td>
               <td>{v.reg_no}</td>
-
+              <td>{v.name}</td>
               <td className={isExpired(v.dl_expiry_date) ? "expired" : ""}>
                 {v.dl_expiry_date}
               </td>
@@ -401,13 +397,14 @@ const Summary = () => {
             <tr key={v.id}>
               <td>{i + 1}</td>
               <td>{v.reg_no}</td>
+              <td>{v.name}</td>
               <td>{v.policy_no}</td>
 
               <td className={isExpired(v.insurance_expiry_date) ? "expired" : ""}>
                 {v.insurance_expiry_date}
               </td>
 
-              <td>{v.name}</td>
+              <td>{v.company_name}</td>
             </tr>
           ))
         }
@@ -417,7 +414,7 @@ const Summary = () => {
             <tr key={v.id}>
               <td>{i + 1}</td>
               <td>{v.reg_no}</td>
-
+              <td>{v.name}</td>
               <td className={isExpired(v.permit_expiry_date) ? "expired" : ""}>
                 {v.permit_expiry_date}
               </td>
@@ -430,7 +427,7 @@ const Summary = () => {
             <tr key={v.id}>
               <td>{i + 1}</td>
               <td>{v.reg_no}</td>
-
+              <td>{v.name}</td>
               <td className={isExpired(v.permit_authorization_date) ? "expired" : ""}>
                 {v.permit_authorization_date}
               </td>
@@ -443,7 +440,7 @@ const Summary = () => {
             <tr key={v.id}>
               <td>{i + 1}</td>
               <td>{v.reg_no}</td>
-
+              <td>{v.name}</td>
               <td className={isExpired(v.road_tax_mv_tax) ? "expired" : ""}>
                 {v.road_tax_mv_tax}
               </td>
@@ -456,7 +453,7 @@ const Summary = () => {
             <tr key={v.id}>
               <td>{i + 1}</td>
               <td>{v.reg_no}</td>
-
+              <td>{v.name}</td>
               <td className={isExpired(v.puc_expiry_date) ? "expired" : ""}>
                 {v.puc_expiry_date}
               </td>
@@ -469,7 +466,7 @@ const Summary = () => {
             <tr key={v.id}>
               <td>{i + 1}</td>
               <td>{v.reg_no}</td>
-
+              <td>{v.name}</td>
               <td className={isExpired(v.cng_leakage_test) ? "expired" : ""}>
                 {v.cng_leakage_test}
               </td>
@@ -482,7 +479,7 @@ const Summary = () => {
             <tr key={v.id}>
               <td>{i + 1}</td>
               <td>{v.reg_no}</td>
-
+              <td>{v.name}</td>
               <td className={isExpired(v.fitness_expiry_date) ? "expired" : ""}>
                 {v.fitness_expiry_date}
               </td>
@@ -495,7 +492,7 @@ const Summary = () => {
             <tr key={v.id}>
               <td>{i + 1}</td>
               <td>{v.reg_no}</td>
-
+              <td>{v.name}</td>
               <td className={isExpired(v.tax_receipt_validity_date) ? "expired" : ""}>
                 {v.tax_receipt_validity_date}
               </td>
@@ -508,20 +505,10 @@ const Summary = () => {
             <tr key={v.id}>
               <td>{i + 1}</td>
               <td>{v.reg_no}</td>
-
+              <td>{v.name}</td>
               <td className={isExpired(v.rc_valid_till_date) ? "expired" : ""}>
                 {v.rc_valid_till_date}
               </td>
-            </tr>
-          ))
-        }
-
-        {tab === "claims" &&
-          list.map((v, i) => (
-            <tr key={v.id}>
-              <td>{i + 1}</td>
-              <td>{v.reg_no}</td>
-              <td>{v.claim}</td>
             </tr>
           ))
         }
