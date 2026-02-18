@@ -76,7 +76,7 @@ function UpdateVehicle() {
 
         {input("Registration No", "reg_no", "text", true)}
 
-        {input("Policy No", "policy_no", "text", true)}
+        {input("Policy No", "policy_no", "text")}
 
         {input("Company Name", "company_name")}
 
